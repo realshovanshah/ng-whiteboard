@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from './login/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'pencil-frontend';
+  constructor(public auth: AuthService) {}
+  title = 'canvas-frontend';
 }
