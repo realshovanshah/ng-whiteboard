@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {fabric} from 'fabric';
+import { BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { AuthService } from '../login/auth.service';
 import { WhiteboardService } from './whiteboard.service';
 
 @Component({
@@ -9,12 +12,21 @@ import { WhiteboardService } from './whiteboard.service';
 })
 export class WhiteboardComponent implements OnInit {
   canvas?: fabric.Canvas;
+  uid?: string;
 
-  constructor(private whiteboardService: WhiteboardService) { }
+  constructor(
+    private whiteboardService: WhiteboardService,
+    private authService: AuthService
+  ) {
+    console.log('Whiteboard Constructor Called');
+    console.log(BehaviorSubject.create(authService.user$).value) 
+  }
 
   async ngOnInit(): Promise<void> {
+    this.uid = (await this.authService.getUserId())!;
+    console.log('User Id: ', this.uid);
     this._setupCanvas();
-    await this._loadCanvasData();
+    this._loadCanvasData(this.uid);
   }
 
   private handleRender(e: fabric.IEvent<Event>){
@@ -24,7 +36,7 @@ export class WhiteboardComponent implements OnInit {
 
   private saveCanvas(canvasData: string){
     console.info('Canvas Data :', canvasData);
-    const whiteboard = { id:'1', data: canvasData }
+    const whiteboard = { userId:this.uid!, data: canvasData }
     this.whiteboardService.updateWhiteboard(whiteboard);
   }
 
@@ -35,8 +47,9 @@ export class WhiteboardComponent implements OnInit {
     this.canvas.on('object:added', this.handleRender.bind(this)); // 'modified, removed'
   }
   
-  private async _loadCanvasData(){
-   const whiteboardData = await this.whiteboardService.loadWhiteboard("1");
+  private async _loadCanvasData(uid: string){
+  console.log('User Id: ', uid)
+   const whiteboardData =  this.whiteboardService.loadWhiteboard(uid);
    console.log('Whiteboard Data: ', whiteboardData);
    if(whiteboardData){
      this.canvas?.loadFromJSON(whiteboardData.data, ()=>{});

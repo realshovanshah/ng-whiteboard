@@ -1,6 +1,7 @@
 <h1>Canvas Frontend</h1>
 <a routerLink="/whiteboard">New Whiteboard</a> |
 <a routerLink="/whiteboard">My Boards</a> |
-<a (click)="auth.signOut()">Log Out</a>
+<a routerLink="/login" (click)="auth.signOut()">Log Out</a>
+
 
 <router-outlet></router-outlet>

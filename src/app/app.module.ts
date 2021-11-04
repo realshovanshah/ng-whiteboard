@@ -23,6 +23,7 @@ const firebaseConfig = {
 
 const routes = [
   {path: 'whiteboard', component: WhiteboardComponent},
+  {path: 'login', component: AuthComponent},
 ];
 
 @NgModule({
